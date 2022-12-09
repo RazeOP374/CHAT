@@ -20,5 +20,10 @@ type LoginResmes struct {
 	Error string `json:"error"`
 }
 type RegisterMes struct {
-	registerpwd int `json:"registerpwd"`
+	User User `json:"user"`
+
+}
+type RegisterResMes struct {
+	Code  int    `json:"code"`
+	Error string `json:"error"`
 }
