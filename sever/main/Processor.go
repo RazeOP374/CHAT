@@ -1,9 +1,9 @@
 package main
 
 import (
-	"GOproject/project1/chatroom/common"
-	"GOproject/project1/chatroom/sever/process"
-	"GOproject/project1/chatroom/sever/utils"
+	"GOproject/project1/chatroom/common/message"
+	process2 "GOproject/project1/chatroom/server/process"
+	"GOproject/project1/chatroom/server/utils"
 	"fmt"
 	"io"
 	"net"
@@ -13,18 +13,22 @@ type Processor struct {
 	Conn net.Conn
 }
 
-func (this *Processor) ServerProcessMes(mes *common.Message) (err error) {
+func (this *Processor) ServerProcessMes(mes *message.Message) (err error) {
 	switch mes.Type {
-	case common.Loginmestype:
+	case message.Loginmestype:
 		//处理登录
-		up := &process.UserProcess{
+		up := &process2.UserProcess{
 			Conn: this.Conn,
 		}
 		err = up.SeverProcessLogin(mes)
-	case common.RegisterMestype:
+	case message.RegisterMestype:
 		//处理注册
+		up := &process2.UserProcess{
+			Conn: this.Conn,
+		}
+		err = up.SeverProcessRegister(mes)
 	default:
-		panic(err)
+		fmt.Println("无法处理消息类型")
 	}
 	return
 }
@@ -35,7 +39,7 @@ func (this *Processor) lo() (err error) {
 		tf := &utils.Transfer{
 			Conn: this.Conn,
 		}
-		mes, err := tf.Readpkg()
+		mes, err := tf.ReadPkg()
 		if err != nil {
 			if err == io.EOF {
 				fmt.Println("客户端退出")
@@ -47,7 +51,7 @@ func (this *Processor) lo() (err error) {
 		}
 		err = this.ServerProcessMes(&mes)
 		if err != nil {
-			panic(err)
+			//panic(err)
 			return err
 		}
 	}

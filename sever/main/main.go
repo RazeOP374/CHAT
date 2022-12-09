@@ -1,14 +1,16 @@
 package main
 
 import (
+	"GOproject/project1/chatroom/server/model"
 	"fmt"
 	"net"
+	"time"
 )
 
 // 读取客户端发送信息,并验证长度
 /*func readpkg(conn net.Conn) (mes common.Message, err error) {
 	buf := make([]byte, 4096)
-	fmt.Println("读取中")
+	fmt.Println("读取中22")
 	_, err = conn.Read(buf[:8])
 	if err != nil {
 		//	panic(err)
@@ -91,35 +93,49 @@ func writepkg(conn net.Conn, data []byte) (err error) {
 	}
 	return
 }*/
-
 // 协程接口处理客户端消息功能
-func mainprocessa(conn net.Conn) {
+func process(conn net.Conn) {
 	defer conn.Close()
 	processor := &Processor{
 		Conn: conn,
 	}
 	err := processor.lo()
 	if err != nil {
-		//	panic(err)
+		fmt.Println("协程出错")
+		//		panic(err)
 		return
 	}
 }
 
+func init() {
+	initPool("localhost:6379", 16, 0, 300*time.Second)
+	initUserDao()
+}
+
+func initUserDao() {
+	model.MyUserDao = model.NewUserDao(pool)
+}
+
 // 服务器端连接监听，接收客户端消息
 func main() {
+	//initPool("localhost:6379", 16, 0, 300*time.Second)
+	//initUserDao()
+
 	fmt.Println("服务器8889")
 	listen, err := net.Listen("tcp", "0.0.0.0:8889")
 	defer listen.Close()
 	if err != nil {
-		panic(err)
+		fmt.Println("listen err")
+		//panic(err)
 		return
 	}
 	for {
 		fmt.Println("等待中")
 		conn, err := listen.Accept()
 		if err != nil {
-			panic(err)
+			fmt.Println("listen err")
+			//	panic(err)
 		}
-		go mainprocessa(conn)
+		go process(conn)
 	}
 }
