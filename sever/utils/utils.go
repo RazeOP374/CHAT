@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"GOproject/project1/chatroom/common"
+	"GOproject/project1/chatroom/common/message"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
@@ -10,19 +10,19 @@ import (
 
 type Transfer struct {
 	Conn net.Conn
-	Buf  [4096]byte
+	Buf  [8096]byte
 }
 
-func (this *Transfer) Readpkg( /*conn net.Conn*/ ) (mes common.Message, err error) {
+func (this *Transfer) ReadPkg() (mes message.Message, err error) {
 	//buf := make([]byte, 4096)
-	fmt.Println("读取中")
-	_, err = this.Conn.Read(this.Buf[:8])
+	fmt.Println("读取中in")
+	_, err = this.Conn.Read(this.Buf[:4])
 	if err != nil {
-		//	panic(err)
+		//		panic(err)
 		return
 	}
-	var pkglen uint64
-	pkglen = binary.BigEndian.Uint64(this.Buf[0:8])
+	var pkglen uint32
+	pkglen = binary.BigEndian.Uint32(this.Buf[0:4])
 	n, err := this.Conn.Read(this.Buf[:pkglen])
 	if n != int(pkglen) || err != nil {
 		//panic(err)
@@ -36,19 +36,19 @@ func (this *Transfer) Readpkg( /*conn net.Conn*/ ) (mes common.Message, err erro
 }
 
 // 服务器端data长度验证，防止丢包
-func (this *Transfer) Writepkg(data []byte) (err error) {
-	var pkglen uint64
-	pkglen = uint64(len(data))
+func (this *Transfer) WritePkg(data []byte) (err error) {
+	var pkglen uint32
+	pkglen = uint32(len(data))
 	//	var bytes [8]byte
-	binary.BigEndian.PutUint64(this.Buf[0:8], pkglen)
-	n, err := this.Conn.Write(this.Buf[:8])
-	if n != 8 || err != nil {
-		panic(err)
+	binary.BigEndian.PutUint32(this.Buf[0:4], pkglen)
+	n, err := this.Conn.Write(this.Buf[:4])
+	if n != 4 || err != nil {
+		//		panic(err)
 		return
 	}
 	n, err = this.Conn.Write(data)
 	if n != int(pkglen) || err != nil {
-		panic(err)
+		//		panic(err)
 		return
 	}
 	return
