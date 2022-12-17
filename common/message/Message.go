@@ -1,10 +1,16 @@
 package message
 
 const (
-	Loginmestype       = "Loginmes"
-	LoginResmestype    = "LoginResmes"
-	RegisterMestype    = "RegisterMes"
-	RegisterResMestype = "RegisterResMes"
+	Loginmestype            = "Loginmes"
+	LoginResmestype         = "LoginResmes"
+	RegisterMestype         = "RegisterMes"
+	RegisterResMestype      = "RegisterResMes"
+	NotifyUserStatusMestype = "NotifyUserStatusMes"
+)
+const (
+	UserOnline = iota
+	UserOffline
+	UserBusy
 )
 
 type Message struct {
@@ -29,4 +35,8 @@ type RegisterMes struct {
 type RegisterResMes struct {
 	Code  int    `json:"code"`
 	Error string `json:"error"`
+}
+type NotifyUserStatusMes struct {
+	UserId int `json:"userId"`
+	Status int `json:"status"`
 }
