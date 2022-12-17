@@ -13,8 +13,7 @@ import (
 type UserProcess struct {
 }
 
-func (this *UserProcess) Register(userId int,
-	userPwd string, userName string) (err error) {
+func (this *UserProcess) Register(userId int, userPwd string, userName string) (err error) {
 	conn, err := net.Dial("tcp", "localhost:8889")
 	if err != nil {
 		fmt.Println("netdial err")
@@ -122,7 +121,12 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 			if id == userId {
 				continue
 			}
-			fmt.Printf("用户id:%d\t", id)
+			fmt.Printf("用户id:%d", id)
+			user := &message.User{
+				UserId:     id,
+				UserStatus: message.UserOnline,
+			}
+			onlineUsers[id] = user
 		}
 		fmt.Print("\n\n")
 		go serverProcessMes(conn)
