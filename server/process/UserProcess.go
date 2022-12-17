@@ -14,6 +14,46 @@ type UserProcess struct {
 	UserId int
 }
 
+func (this *UserProcess) NotifyOthersOnlineUser(userId int) {
+	for id, up := range userMgr.onlineUser {
+		//过滤
+		if id == userId {
+			continue
+		}
+		up.NotifyMeOnline(userId)
+	}
+}
+
+// 通知
+func (this *UserProcess) NotifyMeOnline(userId int) {
+
+	var mes message.Message
+	mes.Type = message.NotifyUserStatusMestype
+	var notifyUserStatusMes message.NotifyUserStatusMes
+	notifyUserStatusMes.UserId = userId
+	notifyUserStatusMes.Status = message.UserOnline
+	//将notifyUserStatusMes序列化
+	data, err := json.Marshal(notifyUserStatusMes)
+	if err != nil {
+		fmt.Println("json.Marshal err=", err)
+		return
+	}
+	mes.Data = string(data)
+	data, err = json.Marshal(mes)
+	if err != nil {
+		fmt.Println("json.Marshal err=", err)
+		return
+	}
+	tf := &utils.Transfer{
+		Conn: this.Conn,
+	}
+	err = tf.WritePkg(data)
+	if err != nil {
+		fmt.Println("NotifyMeOnline err=", err)
+		return
+	}
+}
+
 func (this *UserProcess) SeverProcessRegister(mes *message.Message) (err error) {
 	var registerMes message.RegisterMes
 	err = json.Unmarshal([]byte(mes.Data), &registerMes)
@@ -86,6 +126,7 @@ func (this *UserProcess) SeverProcessLogin(mes *message.Message) (err error) {
 		loginResMes.Code = 200
 		this.UserId = loginmes.UserId
 		userMgr.AddonlineUser(this)
+		this.NotifyOthersOnlineUser(loginmes.UserId)
 		for id, _ := range userMgr.onlineUser {
 			loginResMes.UserIds = append(loginResMes.UserIds, id)
 		}
