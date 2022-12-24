@@ -2,6 +2,8 @@ package process
 
 import (
 	"GOproject/project1/chatroom/client/utils"
+	"GOproject/project1/chatroom/common/message"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
@@ -16,12 +18,16 @@ func ShowMenu() {
 		fmt.Println("----------4.退出系统----------")
 		fmt.Println("请选择")
 		var key int
+		var content string
+		smsprocess := &SmsProcess{}
 		fmt.Scan(&key)
 		switch key {
 		case 1:
-			fmt.Println()
+			outputonlineUser()
 		case 2:
-			fmt.Println()
+			fmt.Println("广播消息")
+			fmt.Scan(&content)
+			smsprocess.SendGroupMes(content)
 		case 3:
 			fmt.Println()
 		case 4:
@@ -42,6 +48,18 @@ func serverProcessMes(conn net.Conn) {
 		if err != nil {
 			return
 		}
-		fmt.Println(mes)
+		switch mes.Type {
+		case message.NotifyUserStatusMestype: // 有人上线了
+
+			//1. 取出.NotifyUserStatusMes
+			var notifyUserStatusMes message.NotifyUserStatusMes
+			json.Unmarshal([]byte(mes.Data), &notifyUserStatusMes)
+			//2. 把这个用户的信息，状态保存到客户map[int]User中
+			updateUserStatus(&notifyUserStatusMes)
+		case message.SmsMesType: //有人群发消息
+			outputGruopMes(&mes)
+		default:
+			fmt.Println("返回无法识别")
+		}
 	}
 }
