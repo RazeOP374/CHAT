@@ -12,7 +12,7 @@ import (
 func ShowMenu() {
 	for {
 		fmt.Println("----------登陆成功----------")
-		fmt.Println("----------1.显示用户在线列表----------")
+		fmt.Println("----------1.广播消息----------")
 		fmt.Println("----------2.发送消息----------")
 		fmt.Println("----------3.历史消息----------")
 		fmt.Println("----------4.退出系统----------")
@@ -23,13 +23,23 @@ func ShowMenu() {
 		fmt.Scan(&key)
 		switch key {
 		case 1:
-			outputonlineUser()
-		case 2:
 			fmt.Println("广播消息")
 			fmt.Scan(&content)
 			smsprocess.SendGroupMes(content)
+		case 2:
+			outputonlineUser()
+			fmt.Println("私聊")
+			var id int
+			fmt.Println("请输入ID")
+			fmt.Scan(&id)
+			fmt.Println("-----私聊-----")
+			for {
+				fmt.Println("请输入内容")
+				fmt.Scan(&content)
+				smsprocess.SendToOne(content, id)
+			}
 		case 3:
-			fmt.Println()
+
 		case 4:
 			fmt.Println("退出")
 			os.Exit(4)
@@ -58,6 +68,9 @@ func serverProcessMes(conn net.Conn) {
 			updateUserStatus(&notifyUserStatusMes)
 		case message.SmsMesType: //有人群发消息
 			outputGruopMes(&mes)
+		case message.SmsResMesType:
+			SmsProcess := SmsProcess{}
+			SmsProcess.OutPut(&mes)
 		default:
 			fmt.Println("返回无法识别")
 		}
