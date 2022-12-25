@@ -31,7 +31,7 @@ func (this *Processor) ServerProcessMes(mes *message.Message) (err error) {
 		err = up.SeverProcessRegister(mes)
 	case message.SmsMesType:
 		smsProcess := &process2.SmsProcess{}
-		smsProcess.SendGruopMes(mes)
+		smsProcess.SendMes(mes)
 	default:
 		fmt.Println("无法处理消息类型")
 	}
