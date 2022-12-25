@@ -11,6 +11,7 @@ import (
 
 func ShowMenu() {
 	for {
+	LOOP:
 		fmt.Println("----------登陆成功----------")
 		fmt.Println("----------1.广播消息----------")
 		fmt.Println("----------2.发送消息----------")
@@ -37,6 +38,14 @@ func ShowMenu() {
 				fmt.Println("请输入内容")
 				fmt.Scan(&content)
 				smsprocess.SendToOne(content, id)
+			}
+			fmt.Println("是否返回上一级,y")
+			var ky string
+			fmt.Scan(&ky)
+			if ky == "y" {
+				goto LOOP
+			} else {
+				fmt.Println("输出有误")
 			}
 		case 3:
 
