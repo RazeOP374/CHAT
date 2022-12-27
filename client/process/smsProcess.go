@@ -54,7 +54,7 @@ func (this *SmsProcess) SendToOne(content string, id int) (err error) {
 	mes.Data = string(data)
 	data, err = json.Marshal(mes)
 	if err != nil {
-		fmt.Println("sendgroupMesERR")
+		fmt.Println("sendtoOneERR")
 		return
 	}
 	tf := &utils.Transfer{
@@ -71,7 +71,7 @@ func (this *SmsProcess) OutPut(mes *message.Message) (err error) {
 	var SmsResMes message.SmsResMes
 	err = json.Unmarshal([]byte(mes.Data), &SmsResMes)
 	if err != nil {
-		fmt.Println("u你Marshalerr", err)
+		fmt.Println("unMarshalerr", err)
 		return
 	}
 	if SmsResMes.Id == 0 {
