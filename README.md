@@ -19,3 +19,5 @@ chatroom/
 │    ├── model     验证数据库中用户信息
 │    ├── process   群发消息/上线提醒
 └────└── utils
+
+**build sever包运行服务端,再运行client登录创建连接**
