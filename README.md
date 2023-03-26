@@ -1,5 +1,5 @@
 # CHATROOM
-**TCP实现的一个聊天室**
+**A chat demo implemented by TCP connection**
 
 # 项目结构
 ```
