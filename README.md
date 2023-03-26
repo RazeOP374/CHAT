@@ -1,7 +1,7 @@
 # CHATROOM
 **A chat demo implemented by TCP connection**
 
-# 项目结构
+# structure
 ```
 chatroom/
 ├── client          
